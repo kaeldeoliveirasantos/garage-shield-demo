@@ -1,6 +1,7 @@
-// Kenney Car Kit / sedan-sports — CC0. See MODEL-LICENSE.md.
+// Ferrari 458 Italia by vicent091036 — CC BY 4.0. See FERRARI-LICENSE.md.
 import * as THREE from 'https://esm.sh/three@0.180.0';
 import { GLTFLoader } from 'https://esm.sh/three@0.180.0/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'https://esm.sh/three@0.180.0/examples/jsm/loaders/DRACOLoader.js';
 import { RoomEnvironment } from 'https://esm.sh/three@0.180.0/examples/jsm/environments/RoomEnvironment.js';
 
 const hero = document.querySelector('.hero');
@@ -31,7 +32,7 @@ async function start() {
     stage.append(renderer.domElement);
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(34, 1, .1, 80);
-    camera.position.set(5.5, 2.8, 6.5);
+    camera.position.set(5.8, 2.2, -6.8);
     camera.lookAt(0, .55, 0);
     const pmrem = new THREE.PMREMGenerator(renderer);
     const room = new RoomEnvironment();
@@ -43,8 +44,22 @@ async function start() {
     red.position.set(-4, 3, -3); scene.add(red);
     const white = new THREE.DirectionalLight(0xffffff, 3);
     white.position.set(3, 6, 4); scene.add(white);
-    const gltf = await new GLTFLoader().loadAsync(new URL('./sedan-sports.glb', import.meta.url).href);
+    const draco = new DRACOLoader();
+    draco.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+    const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(new URL('./ferrari-realista.glb', import.meta.url).href);
+    draco.dispose();
     car = gltf.scene;
+    const body = car.getObjectByName('body');
+    if (body) body.material = new THREE.MeshPhysicalMaterial({color:0x25272d,metalness:1,roughness:.23,clearcoat:1,clearcoatRoughness:.08});
+    const glass = car.getObjectByName('glass');
+    if (glass) glass.material = new THREE.MeshPhysicalMaterial({color:0x18202b,metalness:.25,roughness:.08,transparent:true,opacity:.65});
+    for (const name of ['rim_fl','rim_fr','rim_rl','rim_rr','trim']) {
+      const part = car.getObjectByName(name);
+      if (part) part.material = new THREE.MeshStandardMaterial({color:0x92969d,metalness:1,roughness:.25});
+    }
+    stage.setAttribute('aria-label','Ferrari 458 Italia em 3D, modelo ilustrativo');
+    const credit = document.querySelector('.car-credit');
+    if (credit) { credit.textContent='Ferrari 458 Italia · vicent091036 · CC BY 4.0'; credit.href='FERRARI-LICENSE.md'; }
     const box = new THREE.Box3().setFromObject(car);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
