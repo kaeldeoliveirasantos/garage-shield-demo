@@ -1,4 +1,4 @@
-.car-stage{position:absolute;inset:3% 0 1% 34%;z-index:1;opacity:0;pointer-events:none;transition:opacity .7s}
+.car-stage{position:absolute;inset:3% -4% 1% 43%;z-index:1;opacity:0;pointer-events:none;transition:opacity .7s}
 .car-stage canvas{width:100%;height:100%;display:block}
 .has-car-3d .car-stage{opacity:1}
 .has-car-3d .hero-car{opacity:0!important}
